@@ -4,81 +4,226 @@ namespace UniversityClinicHospital
 {
     class Program
     {
-        enum FormatType
+        static void Main(string[] args)
         {
-            None,
-            BoldFormat,    // Is a format value.
-            ItalicsFormat, // Is a format value.
-            Hyperlink      // Not a format value.
-        }
-
-        static void Main()
-        {
-            // ... Test enum with switch method.
-            FormatType formatValue = (FormatType)2;
-            if (IsFormat(formatValue))
-            {
-                // This is not reached, as None does not return a true value in IsFormat.
-                Console.WriteLine("Yep");
-            }
-
-            // ... Test another enum with switch.
-            formatValue = FormatType.ItalicsFormat;
-            if (IsFormat(formatValue))
-            {
-                // This is printed, as we receive true from IsFormat.
-                Console.WriteLine("True");
-            }
-        }
-
-        /// <summary>
-        /// Returns true if the FormatType is Bold or Italics.
-        /// </summary>
-        static bool IsFormat(FormatType value)
-        {
-            switch (value)
-            {
-                case FormatType.BoldFormat:
-                case FormatType.ItalicsFormat:
-                    {
-                        // These 2 values are format values.
-                        return true;
-                    }
-                default:
-                    {
-                        // The argument is not a format value.
-                        return false;
-                    }
-            }
-        }
 
 
-        /*static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-        }*/
+
+
+        }        
     }
-    public class Employee
+    public abstract class Employee
     {
-        private string Name {get; set;} 
-        private double Salary {get; set;}
+        private double Salary { get; set; }
+        private double AmountPaid { get; set; }
+        private string FirstName { get; set; }
+        private string LastName { get; set; }
+        //public abstract double Salary { get; set; }
         private string EmployeeNumber { get; set; }
-        private bool Paid { get; set; } = false;
-        public enum Role
+        private bool Paid { get; set; } = false; //default value = false
+        private bool OnPhone { get; set; } = false; //default value = false
+        readonly bool DrawsBlood; //default value = false
+        readonly Role EmpRole;
+        private enum Role
         {
-            Doctor,
-            Nurse,
-            Receptionist,
-            Janitor
+            Doctor,         //0
+            Nurse,          //1
+            Receptionist,   //2
+            Janitor         //3
         }
-
-        public void Pay()
+        public Employee(string firstName, string lastName, string employeeNumber, bool bloodAbility, int role)
         {
-            Paid = true;
+            FirstName = firstName;
+            LastName = lastName;
+            EmployeeNumber = employeeNumber;
+            DrawsBlood = bloodAbility;
+            EmpRole = (Role)role;
+
+        }
+        public abstract void PayEmployee();
+        public void SetSalary(double salary)
+        {
+            Salary = salary;
         }
         public bool PaidYet()
         {
             return Paid;
+        }
+        public void MakePayment()
+        {
+            Paid = true;
+        }
+        public bool GetBloodDrawingStatus()
+        {
+            return (DrawsBlood);
+        }
+        public string GetRole()
+        {
+            switch (EmpRole)
+            {
+                case Role.Doctor:
+                    return "Doctor";
+                case Role.Nurse:
+                    return "Nurse";
+                case Role.Receptionist:
+                    return "Receptionist";
+                case Role.Janitor:
+                    return "Janitor";
+                default:
+                    return "No_Role_Set";
+            }
+        }
+        public double GetSalary()
+        {
+            return (Salary);
+        }
+        public string PrintAll()
+        {
+
+            return (FirstName.PadRight(15) +
+                LastName.PadRight(15) +
+                EmployeeNumber.PadRight(6) +
+                "$" + GetSalary().ToString().PadRight(8) +
+                GetRole().PadRight(14) +
+                GetBloodDrawingStatus().ToString());
+        }
+        public bool IsMedicalEmployee()
+        {
+            if ((int)EmpRole < 2)
+                return (true);
+            else
+                return (false);
+        }
+    }
+    public class Doctor:Employee
+    {
+        private const double ActualSalary = 90000.00;
+        private const string Type = "Doctor";
+        private const bool Blood = true;
+        private string Specialty { get; set; } = "Not_Set";
+        public Doctor(string firstName, string lastName, string employeeNumber):base (firstName, lastName, employeeNumber, Blood, 0)
+        {
+            SetSalary(ActualSalary);         
+        }
+        public override void PayEmployee()
+        {
+            if (PaidYet())
+            {
+                Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
+
+            }
+            else
+            {
+                MakePayment();
+                Console.WriteLine(Type + " just got PAID $" + ActualSalary + "!");
+            }
+        }
+        public void SetSpecialty(string specialty)
+        {
+            Specialty = specialty;
+        }
+        public string GetSpecialty()
+        {
+            return (Specialty);
+        }
+
+
+    }
+    public class Nurse : Employee
+    {
+        private const double ActualSalary = 50000.00;
+        private const string Type = "Nurse";
+        private const bool Blood = true;
+        private bool TalkingOnPhone { get; set; }
+        public Nurse(string firstName, string lastName, string employeeNumber) : base(firstName, lastName, employeeNumber, Blood,1)
+        {
+            SetSalary(ActualSalary);
+        }
+        public override void PayEmployee()
+        {
+            if (!PaidYet())
+            {
+                Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
+
+            }
+            else
+            {
+                MakePayment();
+                Console.WriteLine(Type + " just got PAID $" + ActualSalary + "!");
+            }
+        }
+
+    }
+    public class Receptionist : Employee
+    {
+        private const double ActualSalary = 45000.00;
+        private const string Type = "Receptionist";
+        private const bool Blood = false;
+        private bool TalkingOnPhone { get; set; } = false;
+        public Receptionist(string firstName, string lastName, string employeeNumber) : base(firstName, lastName, employeeNumber, Blood, 2)
+        {
+            SetSalary(ActualSalary);
+        }
+        public override void PayEmployee()
+        {
+            if (!PaidYet())
+            {
+                Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
+
+            }
+            else
+            {
+                MakePayment();
+                Console.WriteLine(Type + " just got PAID $" + ActualSalary + "!");
+            }
+        }
+        public void MakeCall()
+        {
+            TalkingOnPhone = true;
+        }
+        public void EndCall()
+        {
+            TalkingOnPhone = false;
+        }
+        public bool IsOnPhone()
+        {
+            return (TalkingOnPhone);
+        }
+    }
+    public class Janitor : Employee
+    {
+        private const double ActualSalary = 40000.00;
+        private const string Type = "Janitor";
+        private const bool Blood = false;
+        private bool Sweeping { get; set; } = false;
+        public Janitor(string firstName, string lastName, string employeeNumber) : base(firstName, lastName, employeeNumber, Blood, 3)
+        {
+            SetSalary(ActualSalary);
+        }
+        public override void PayEmployee()
+        {
+            if (!PaidYet())
+            {
+                Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
+
+            }
+            else
+            {
+                MakePayment();
+                Console.WriteLine(Type + " just got PAID $" + ActualSalary + "!");
+            }
+        }
+        public void StartSweeping()
+        {
+            Sweeping = true;
+        }
+        public void StopSweeping()
+        {
+            Sweeping = false;
+        }
+        public bool IsSweeping()
+        {
+            return (Sweeping);
         }
     }
     public class Patient
