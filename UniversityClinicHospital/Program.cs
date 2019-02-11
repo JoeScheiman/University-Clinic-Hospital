@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UniversityClinicHospital
 {
@@ -6,9 +7,74 @@ namespace UniversityClinicHospital
     {
         static void Main(string[] args)
         {
+            var theEmployees = new List<Employee>();
+            theEmployees.Add(new Doctor("Joe", "Scheiman", "0000"));
+            theEmployees.Add(new Nurse("Billy", "Bobson", "1111"));
+            theEmployees.Add(new Janitor("Janet", "Boolean", "7777"));
+            theEmployees.Add(new Receptionist("Sam", "Sunk", "8888"));
+
+            Console.WriteLine("\t==== Employees ====");
+            Console.WriteLine("FIRST_NAME".PadRight(15)+"LAST_NAME".PadRight(15)+"EMP#".PadRight(6)+
+                "SALARY".PadRight(9)+"ROLE".PadRight(14)+"DRAWS_BLOOD");
+            foreach (Employee emp in theEmployees)
+            {
+                Console.WriteLine(emp.ToStringAll());
+            }
+
+            var thePatients = new List<Patient>();
+            thePatients.Add(new Patient("Phil"));
+            thePatients.Add(new Patient("Ken"));
+            thePatients.Add(new Patient("Dom"));
+            thePatients.Add(new Patient("Melto"));
+
+            Console.WriteLine("\n\n\t==== Patients ====");
+            Console.WriteLine("NAME".PadRight(10) + "BLOOD_LEVEL".PadRight(13) + "HEALTH_LEVEL".PadRight(13));
+            foreach (Patient pat in thePatients)
+            {
+                Console.WriteLine(pat.ToStringAll());
+            }
+
+            Console.WriteLine("\n\n ==Payments==");
+            for (int i = 0; i < theEmployees.Count; i++)
+            {
+                Console.WriteLine(theEmployees[i].GetRole() + " tries to get paycheck.");
+                theEmployees[i].PayEmployee();
+            }
+            Console.WriteLine("\n\n");
+            for (int i = 0; i < theEmployees.Count; i++)
+            {
+                Console.WriteLine(theEmployees[i].GetRole() + " tries to get paycheck...again.");
+                theEmployees[i].PayEmployee();
+            }
+
+            Console.WriteLine("\n\n ==Actions==");
+            for (int i = 0; i<theEmployees.Count;i++)
+            {
+                Console.WriteLine(theEmployees[i].GetRole() + " tries to draw blood from " + thePatients[1].GetName());
+                thePatients[1].GiveBlood(theEmployees[i]);
+            }
+            Console.WriteLine("\n\n\t==== Patients Updated ====");
+            Console.WriteLine("NAME".PadRight(10) + "BLOOD_LEVEL".PadRight(13) + "HEALTH_LEVEL".PadRight(13));
+            foreach (Patient pat in thePatients)
+            {
+                Console.WriteLine(pat.ToStringAll());
+            }
+            Console.WriteLine("\n\n");
+            for (int i = 0; i < theEmployees.Count; i++)
+            {
+                Console.WriteLine(theEmployees[i].GetRole() + " tries to infuse blood to " + thePatients[2].GetName());
+                thePatients[2].InfuseBlood(theEmployees[i]);
+            }
+            Console.WriteLine("\n\n\t==== Patients Updated ====");
+            Console.WriteLine("NAME".PadRight(10) + "BLOOD_LEVEL".PadRight(13) + "HEALTH_LEVEL".PadRight(13));
+            foreach (Patient pat in thePatients)
+            {
+                Console.WriteLine(pat.ToStringAll());
+            }
 
 
-
+            Console.WriteLine("......press any key to continue");
+            Console.ReadKey();
 
         }        
     }
@@ -77,7 +143,7 @@ namespace UniversityClinicHospital
         {
             return (Salary);
         }
-        public string PrintAll()
+        public string ToStringAll()
         {
 
             return (FirstName.PadRight(15) +
@@ -141,7 +207,7 @@ namespace UniversityClinicHospital
         }
         public override void PayEmployee()
         {
-            if (!PaidYet())
+            if (PaidYet())
             {
                 Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
 
@@ -166,7 +232,7 @@ namespace UniversityClinicHospital
         }
         public override void PayEmployee()
         {
-            if (!PaidYet())
+            if (PaidYet())
             {
                 Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
 
@@ -202,7 +268,7 @@ namespace UniversityClinicHospital
         }
         public override void PayEmployee()
         {
-            if (!PaidYet())
+            if (PaidYet())
             {
                 Console.WriteLine(Type + " was already PAID $" + ActualSalary + "!");
 
@@ -228,6 +294,77 @@ namespace UniversityClinicHospital
     }
     public class Patient
     {
-
+        private int BLOOD_LEVEL { get; set; } = 20;
+        private int HEALTH_LEVEL { get; set; } = 10;
+        private string Name { get; set; }
+        private const int DocBloodAmount = 5;
+        private const int NurBloodAmount = 3;
+        private const int DocHealthAmount = 2;
+        private const int NurHealthAmount = 1;
+        public Patient(string name)
+        {
+            Name = name;
+        }
+        public int BloodRemaining()
+        {
+            return (BLOOD_LEVEL);
+        }
+        public string GetName()
+        {
+            return (Name);
+        }
+        public void GiveBlood(Employee bloodTaker)
+        {
+            if (bloodTaker.IsMedicalEmployee())
+            {
+                if ( bloodTaker.GetRole().Equals("Doctor"))
+                {
+                    BLOOD_LEVEL -= DocBloodAmount;
+                    HEALTH_LEVEL -= DocHealthAmount;
+                    Console.WriteLine("Doctor draws " + DocBloodAmount + " units of blood.");
+                }
+                else if (bloodTaker.GetRole().Equals("Nurse"))
+                {
+                    BLOOD_LEVEL -= NurBloodAmount;
+                    HEALTH_LEVEL -= NurHealthAmount;
+                    Console.WriteLine("Nurse draws " + NurBloodAmount + " units of blood.");
+                }
+                else
+                {
+                    Console.WriteLine("No Blood Taken!");
+                }
+            }
+            else
+                Console.WriteLine("No Blood Taken!");
+        }
+        public void InfuseBlood(Employee bloodGiver)
+        {
+            if (bloodGiver.IsMedicalEmployee())
+            {
+                if (bloodGiver.GetRole().Equals("Doctor"))
+                {
+                    BLOOD_LEVEL += DocBloodAmount;
+                    HEALTH_LEVEL += DocHealthAmount;
+                    Console.WriteLine("Doctor infuses " + DocBloodAmount + " units of blood.");
+                }
+                else if (bloodGiver.GetRole().Equals("Nurse"))
+                {
+                    BLOOD_LEVEL += NurBloodAmount;
+                    HEALTH_LEVEL += NurHealthAmount;
+                    Console.WriteLine("Nurse infuses " + NurBloodAmount + " units of blood.");
+                }
+                else
+                {
+                    Console.WriteLine("No Blood Infused!");
+                }
+            }
+            else
+                Console.WriteLine("No Blood Infused!");
+        }
+        public string ToStringAll()
+        {
+            return (Name.PadRight(10) + HEALTH_LEVEL.ToString().PadRight(13) +
+                BLOOD_LEVEL.ToString().PadRight(13));
+        }
     }
 }
