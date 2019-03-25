@@ -5,8 +5,8 @@ namespace UniversityClinicHospital.Tests
 {
     public class EmployeeTests
     {
-        Employee theDoc = new Doctor("Joe", "Scheiman", "0000");
-        Employee theNurse = new Nurse("Billy", "Joel", "1111");
+        readonly Employee theDoc = new Doctor("Joe", "Scheiman", "0000");
+        readonly Employee theNurse = new Nurse("Billy", "Joel", "1111");
         [Fact]
         public void Is_Doctor_Not_Paid_By_Default()
         {
